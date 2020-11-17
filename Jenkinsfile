@@ -5,6 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                sh 'gradle wrapper'
                 sh './gradlew clean build'
             }
         }
