@@ -1,51 +1,55 @@
 package com.example.mockwebservices;
 
+import com.example.mockwebservices.controller.EntityController;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.spring.CucumberContextConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = MockWebServicesApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class CucumberSpringConfiguraton {
 
-    static ResponseResults latestResponse = null;
+    static ResponseEntity<String> responseEntity = null;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityController.class);
 
     @Autowired
     protected RestTemplate restTemplate;
 
-//    void executeGet(String url) throws IOException {
-//        final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
-//        latestResponse = restTemplate.execute(url, HttpMethod.GET, null, response -> {
-//            if (errorHandler.hadError) {
-//                return (errorHandler.getResults());
-//            } else {
-//                return (new ResponseResults(response));
-//            }
-//        });
-//    }
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     void executeGet(String url) throws IOException {
-        final Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json");
-        final HeaderSettingRequestCallback requestCallback = new HeaderSettingRequestCallback(headers);
+
         final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
 
         restTemplate.setErrorHandler(errorHandler);
-        latestResponse = restTemplate.execute(url, HttpMethod.GET, requestCallback, response -> {
-            if (errorHandler.hadError) {
-                return (errorHandler.getResults());
-            } else {
-                return (new ResponseResults(response));
-            }
-        });
+        responseEntity = restTemplate.getForEntity(url, String.class);
+    }
+
+    void executePost(String url, String payload) {
+        final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<>(payload, headers);
+
+        responseEntity = restTemplate.postForEntity(url, entity, String.class);
     }
 
     private class ResponseResultErrorHandler implements ResponseErrorHandler {

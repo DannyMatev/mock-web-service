@@ -1,0 +1,10 @@
+applications:
+- name: mock-web-services
+  path: ./build/libs/mock-web-services-0.0.1-SNAPSHOT.jar
+  memory: 1G
+  random-route: true
+  env:
+    JBP_CONFIG_OPEN_JDK_JRE: '[ jre: { version: 11.+ }, memory_calculator: { stack_threads: 800, memory_sizes: {native: 150m, stack: 512k} }]'
+  services:
+    - mongo-db
+    - elk-stack

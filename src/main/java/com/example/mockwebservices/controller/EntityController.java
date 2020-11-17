@@ -1,5 +1,6 @@
 package com.example.mockwebservices.controller;
 
+import com.example.mockwebservices.metrics.EntityCounter;
 import com.example.mockwebservices.service.EntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,26 +10,30 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Set;
 
 @RestController
 public class EntityController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private EntityService entityService;
+    private EntityCounter entityCounter;
 
     @Autowired
-    public EntityController(EntityService entityService) {
+    public EntityController(EntityService entityService, EntityCounter entityCounter) {
         this.entityService = entityService;
+        this.entityCounter = entityCounter;
     }
 
     @PostMapping(value = "/{entity}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> createEntity(@PathVariable String entity, @RequestBody String payload) {
-        entityService.createEntity(entity, payload);
+    public ResponseEntity<String> createEntity(@PathVariable String entity, @RequestBody String payload) {
+        entityCounter.handleCreatedEntity();
+        String id = entityService.createEntity(entity, payload);
         LOGGER.info(String.format("Created entity '%s' with body \n %s", entity, payload));
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(URI.create(id).toString());
     }
 
     @PutMapping(value = "/{entity}/{entityId}", consumes = MediaType.APPLICATION_JSON_VALUE)

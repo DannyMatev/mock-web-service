@@ -8,7 +8,9 @@ com/example/mockwebservices/exception/EntityNotFoundException.java
  com.example.mockwebservices.exception.EntityNotFoundException
 com/example/mockwebservices/MockWebServicesApplication.java
  com.example.mockwebservices.MockWebServicesApplication
-com/example/mockwebservices/repository/EntityRepositoryImpl.java
- com.example.mockwebservices.repository.EntityRepositoryImpl
+com/example/mockwebservices/metrics/EntityCounter.java
+ com.example.mockwebservices.metrics.EntityCounter
 com/example/mockwebservices/util/GlobalExceptionHandler.java
  com.example.mockwebservices.util.GlobalExceptionHandler
+com/example/mockwebservices/repository/EntityRepositoryImpl.java
+ com.example.mockwebservices.repository.EntityRepositoryImpl

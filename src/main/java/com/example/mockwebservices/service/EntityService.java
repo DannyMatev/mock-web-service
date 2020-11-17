@@ -18,8 +18,8 @@ public class EntityService {
         this.entityRepository = entityRepository;
     }
 
-    public void createEntity(String entityName, String entity) {
-        entityRepository.saveEntity(entityName, entity);
+    public String createEntity(String entityName, String entity) {
+        return entityRepository.saveEntity(entityName, entity);
     }
 
     public List<String> fetchAllForEntity(String entityName) {

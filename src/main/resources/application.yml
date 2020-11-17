@@ -1,4 +1,11 @@
 spring:
   data:
-  mongodb:
-    host: localhost:27017
+    mongodb:
+      host: localhost:27017
+      database: mock-web-services-db-test
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus

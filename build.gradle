@@ -1,52 +1,60 @@
 plugins {
-	id 'org.springframework.boot' version '2.3.4.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.3.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '8'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
-dependencies {
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-	// https://mvnrepository.com/artifact/io.cucumber/cucumber-java
-	testImplementation group: 'io.cucumber', name: 'cucumber-java', version: '6.7.0'
-	// https://mvnrepository.com/artifact/io.cucumber/cucumber-spring
-	testImplementation group: 'io.cucumber', name: 'cucumber-spring', version: '6.7.0'
-// https://mvnrepository.com/artifact/org.springframework/spring-web
+bootJar {
+    mainClassName = 'com.example.mockwebservices.MockWebServicesApplication'
+}
 
-	// https://mvnrepository.com/artifact/io.cucumber/cucumber-junit
-	testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '6.7.0'
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+//    compile group: 'org.springframework.cloud', name: 'spring-cloud-spring-service-connector', version: '2.0.7.RELEASE'
+//    compile group: 'org.springframework.cloud', name: 'spring-cloud-cloudfoundry-connector', version: '2.0.7.RELEASE'
+
+    compile group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '6.4'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.5.RELEASE'
+    compile('io.micrometer:micrometer-registry-prometheus')
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation group: 'io.cucumber', name: 'cucumber-java', version: '6.7.0'
+    testImplementation group: 'io.cucumber', name: 'cucumber-spring', version: '6.7.0'
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '6.7.0'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 configurations {
-	cucumberRuntime {
-		extendsFrom testImplementation
-	}
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
 }
 
 
 task cucumber() {
-	dependsOn assemble, compileTestJava
-	doLast {
-		javaexec {
-			main = "io.cucumber.core.cli.Main"
-			classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-			args = ['--plugin', 'pretty', '--glue', 'com.example.mockwebservices', 'src/test/resources']
-		}
-	}
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'com.example.mockwebservices', 'src/test/resources']
+        }
+    }
 }
 

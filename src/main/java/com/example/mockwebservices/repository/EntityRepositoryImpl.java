@@ -37,7 +37,7 @@ public class EntityRepositoryImpl implements EntityRepository {
 
         LOGGER.info(String.format("Entity saved in collection %s", entityName));
 
-        return savedEntity.toJson();
+        return savedEntity.get("_id").toString();
     }
 
     public Document updateEntity(String entityName, String entityId, String entity) {
